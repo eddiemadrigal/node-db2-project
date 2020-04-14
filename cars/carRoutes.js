@@ -1,9 +1,20 @@
 const express = require('express');
 
+const db = require('../data/dbConfig.js')
+
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  res.status(200).send('Hello from /GET /api/cars endpoint')
+router.get('/', (req, res) => { // select * from cars
+  db
+    .select('*')
+    .from('cars')
+    .then( cars => {
+      res.status(200).json({ data: cars })
+    })
+    .catch( err => {
+      console.log( err );
+      res.status(500).json({ error: err.message });
+    });
 });
 
 router.get('/:id', (req, res) => {
