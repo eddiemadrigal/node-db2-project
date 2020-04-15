@@ -17,7 +17,7 @@ router.get('/', (req, res) => { // select * from cars
     });
 });
 
-router.post('/', (req, res) => {
+router.post('/', (req, res) => { // insert into cars
   const postData = req.body;
   db('cars')
   .insert( postData )
@@ -30,13 +30,33 @@ router.post('/', (req, res) => {
   });
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', (req, res) => { // select * from cars where id = 
   const id = req.params.id;
-  res.status(200).send(`Hello from /GET /api/cars/${id} endpoint`);
-})
+  db('cars')
+  .where({ id })
+  .select('*')
+  .then( cars => {
+    res.status(200).json({ data: cars })
+  })
+  .catch( err => {
+    console.log( err );
+    res.status(500).json({ error: err.message })
+  })
+});
 
-router.post('/', (req, res) => {
-  res.status(200).send(`Hello from /POST /api/cars endpoint`)
+router.put('/:id', (req, res) => {
+  const changes = req.body;
+  const id = req.params.id;
+  db('cars')
+    .where ({ id })
+    .update ( changes )
+    .then( cars => {
+      res.status(200).json({ data: cars });
+    })
+    .catch( err => {
+      console.log( err );
+      res.status(500).json({ error: err.message });
+    });
 });
 
 module.exports = router;
